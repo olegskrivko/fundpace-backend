@@ -1,0 +1,19 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Django local database and files
+db.sqlite3
+.env
+media/
+staticfiles/
+
+# Pytest cache
+.pytest_cache/
