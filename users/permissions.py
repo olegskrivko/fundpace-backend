@@ -10,15 +10,13 @@ class IsAdminOrStaffOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
             return True
-        return bool(
-            request.user and request.user.is_authenticated and request.user.is_staff
-        )
+        return bool(request.user and request.user.is_authenticated and request.user.is_staff)
 
 
 class IsVerifiedBrandOrReadOnly(permissions.BasePermission):
     """
     - Lasīt (GET) var visi.
-    - Izveidot/mainīt var tikai verificēti zīmoli vai staff/admin.
+    - Izveidot/mainīt var tikai verificēti zīmoli (brand_profile.is_verified=True) vai staff/admin.
     - Objekta līmenī mainīt var tikai īpašnieks (obj.brand) vai staff/admin.
     """
 
@@ -33,9 +31,11 @@ class IsVerifiedBrandOrReadOnly(permissions.BasePermission):
         if user.is_staff:
             return True
 
-        return (
+        brand_profile = getattr(user, "brand_profile", None)
+        return bool(
             getattr(user, "role", None) == "brand"
-            and getattr(user, "is_verified_brand", False)
+            and brand_profile is not None
+            and brand_profile.is_verified
         )
 
     def has_object_permission(self, request, view, obj):
@@ -45,13 +45,15 @@ class IsVerifiedBrandOrReadOnly(permissions.BasePermission):
         return getattr(obj, "brand", None) == request.user or request.user.is_staff
 
 
-class IsAthlete(permissions.BasePermission):
-    """Atļauj piekļuvi tikai autentificētiem sportistiem (noderēs pieteikumu aplikācijai)."""
+class IsEligibleAthlete(permissions.BasePermission):
+    """
+    Atļauj piekļuvi tikai autentificētiem sportistiem, kuriem ir profils un kuri nav nobanoti.
+    """
 
     def has_permission(self, request, view):
         user = request.user
-        return bool(
-            user
-            and user.is_authenticated
-            and getattr(user, "role", None) == "athlete"
-        )
+        if not user or not user.is_authenticated or getattr(user, "role", None) != "athlete":
+            return False
+
+        athlete_profile = getattr(user, "athlete_profile", None)
+        return bool(athlete_profile is not None and not athlete_profile.is_banned)
