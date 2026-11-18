@@ -7,5 +7,8 @@ class CampaignsHomeView(APIView):
     """
     Temporary view for testing campaigns endpoint.
     """
+
     def get(self, request):
-        return Response({"message": "Hello from Campaigns API!"}, status=status.HTTP_200_OK)
+        return Response(
+            {"message": "Hello from Campaigns API!"}, status=status.HTTP_200_OK
+        )

@@ -1,7 +1,11 @@
-from django.urls import path
-from .views import EventsHomeView
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
+from .views import EventViewSet, RaceViewSet
+
+router = DefaultRouter()
+router.register(r"events", EventViewSet, basename="event")
+router.register(r"races", RaceViewSet, basename="race")
 
 urlpatterns = [
-    # Resulting URL: /api/v1/events/
-    path('events/', EventsHomeView.as_view(), name='events-home'),
+    path("", include(router.urls)),
 ]
