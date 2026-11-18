@@ -18,12 +18,16 @@ def api_client():
 
 @pytest.fixture
 def regular_user(db):
-    return User.objects.create_user(username="runner", password="password123", is_staff=False)
+    return User.objects.create_user(
+        username="runner", password="password123", is_staff=False
+    )
 
 
 @pytest.fixture
 def staff_user(db):
-    return User.objects.create_user(username="admin_staff", password="password123", is_staff=True)
+    return User.objects.create_user(
+        username="admin_staff", password="password123", is_staff=True
+    )
 
 
 @pytest.fixture
@@ -53,7 +57,7 @@ class TestEventEndpoints:
     def test_list_events_public(self, api_client, sample_event, sample_race):
         url = "/api/v1/events/"
         response = api_client.get(url)
-        
+
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) == 1
         assert response.data[0]["name"] == sample_event.name
@@ -104,10 +108,16 @@ class TestRaceEndpoints:
     def test_filter_races_by_event(self, api_client, sample_event, sample_race):
         # Create another event and race to test filtering
         other_event = Event.objects.create(
-            name="Tallinn Marathon", location="Tallinn", start_date="2027-09-12", end_date="2027-09-13"
+            name="Tallinn Marathon",
+            location="Tallinn",
+            start_date="2027-09-12",
+            end_date="2027-09-13",
         )
         Race.objects.create(
-            event=other_event, name="10K", distance_km=Decimal("10.0000"), race_date="2027-09-12"
+            event=other_event,
+            name="10K",
+            distance_km=Decimal("10.0000"),
+            race_date="2027-09-12",
         )
 
         url = f"/api/v1/races/?event={sample_event.id}"
@@ -120,7 +130,7 @@ class TestRaceEndpoints:
     def test_race_date_bounds_validation(self, api_client, staff_user, sample_event):
         api_client.force_authenticate(user=staff_user)
         url = "/api/v1/races/"
-        
+
         # Race date is outside event start/end (event is May 15-16, race is May 20)
         payload = {
             "event": sample_event.id,
@@ -129,6 +139,6 @@ class TestRaceEndpoints:
             "race_date": "2027-05-20",
         }
         response = api_client.post(url, payload)
-        
+
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "race_date" in response.data

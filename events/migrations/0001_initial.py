@@ -5,42 +5,68 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Event',
+            name="Event",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('location', models.CharField(max_length=255)),
-                ('start_date', models.DateField()),
-                ('end_date', models.DateField()),
-                ('description', models.TextField(blank=True)),
-                ('website', models.URLField(blank=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("location", models.CharField(max_length=255)),
+                ("start_date", models.DateField()),
+                ("end_date", models.DateField()),
+                ("description", models.TextField(blank=True)),
+                ("website", models.URLField(blank=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
             options={
-                'ordering': ['start_date', 'name'],
-                'constraints': [models.CheckConstraint(condition=models.Q(('end_date__gte', models.F('start_date'))), name='event_end_date_gte_start_date')],
+                "ordering": ["start_date", "name"],
+                "constraints": [
+                    models.CheckConstraint(
+                        condition=models.Q(("end_date__gte", models.F("start_date"))),
+                        name="event_end_date_gte_start_date",
+                    )
+                ],
             },
         ),
         migrations.CreateModel(
-            name='Race',
+            name="Race",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('distance_km', models.DecimalField(decimal_places=4, max_digits=9)),
-                ('race_date', models.DateField()),
-                ('start_time', models.TimeField(blank=True, null=True)),
-                ('event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='races', to='events.event')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("distance_km", models.DecimalField(decimal_places=4, max_digits=9)),
+                ("race_date", models.DateField()),
+                ("start_time", models.TimeField(blank=True, null=True)),
+                (
+                    "event",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="races",
+                        to="events.event",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['race_date', 'start_time', 'distance_km'],
+                "ordering": ["race_date", "start_time", "distance_km"],
             },
         ),
     ]

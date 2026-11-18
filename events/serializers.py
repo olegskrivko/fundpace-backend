@@ -5,14 +5,7 @@ from .models import Event, Race
 class RaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Race
-        fields = [
-            "id", 
-            "event", 
-            "name", 
-            "distance_km", 
-            "race_date", 
-            "start_time"
-        ]
+        fields = ["id", "event", "name", "distance_km", "race_date", "start_time"]
 
     def validate(self, attrs):
         event = attrs.get("event") or getattr(self.instance, "event", None)
@@ -49,7 +42,9 @@ class EventSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, attrs):
-        start_date = attrs.get("start_date") or getattr(self.instance, "start_date", None)
+        start_date = attrs.get("start_date") or getattr(
+            self.instance, "start_date", None
+        )
         end_date = attrs.get("end_date") or getattr(self.instance, "end_date", None)
 
         if start_date and end_date and end_date < start_date:
