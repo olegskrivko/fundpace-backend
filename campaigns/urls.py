@@ -1,7 +1,10 @@
-from django.urls import path
-from .views import CampaignsHomeView
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
+from .views import CampaignViewSet
+
+router = DefaultRouter()
+router.register(r"campaigns", CampaignViewSet, basename="campaign")
 
 urlpatterns = [
-    # Resulting URL: /api/v1/campaigns/
-    path("campaigns/", CampaignsHomeView.as_view(), name="campaigns-home"),
+    path("", include(router.urls)),
 ]
